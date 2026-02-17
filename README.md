@@ -2,6 +2,22 @@
 
 This is a site for searching the NPS API to find information on different parks and activities!
 
+## American Adventures
+
+Search through the National Parks of the United States of America to find activities!
+
+## TODOS
+
+- [ ] Build search page (Live search, filters for states)
+- [ ] Build template for search result card (Display park name, a short discription, states, and admission price)
+- [ ] Build a page to dislpay more information about the park (Name, description, states, admission price, full list of
+      ammenities, full list of activities, use the URL to store parameters, i.e. 'american-advendures.com/?park=yell)
+- [ ] JSON file listing each park's full name and the park's assosciated code
+- [ ] JavaScript to communicate with NPS API, take user input and use async/await `fetch` to send the assosciated code
+      to the API
+- [x] Make info cards on search page grow on hover
+- [ ] Make dropdowns move smoothly
+
 ## Features
 
 - Vite
@@ -38,17 +54,3 @@ I personally like to use GitHub Desktop on Windows to manage commits instead of 
 3. Create a directory named husky.
 4. Create a file named init.sh, containing the line `export PATH="$PATH:/c/Program Files/Git/bin:/c/Program Files/nodejs"`. I used VS Code to do so. This helps GitHub Desktop to find where Git and Node.JS are located.
 5. That's it! GitHub Desktop should now be able to create and push your commits without issue now.
-
-## American Adventures
-
-Search through the National Parks of the United States of America to find activities!
-
-## TODOS
-
-- [ ] Build search page (Live search, filters for states)
-- [ ] Build template for search result card (Display park name, a short discription, states, and admission price)
-- [ ] Build a page to dislpay more information about the park (Name, description, states, admission price, full list of ammenities, full list of activities, use the URL to store parameters, i.e. 'american-advendures.com/?park=yell)
-- [ ] JSON file listing each park's full name and the park's assosciated code
-- [ ] JavaScript to communicate with NPS API, take user input and use async/await `fetch` to send the assosciated code to the API
-- [x] Make info cards on search page grow on hover
-- [ ] Make dropdowns move smoothly
