@@ -45,10 +45,10 @@ Search through the National Parks of the United States of America to find activi
 
 ## TODOS
 
-- [] Build search page (Live search, filters for states)
-- [] Build template for search result card (Display park name, a short discription, states, and admission price)
-- [] Build a page to dislpay more information about the park (Name, description, states, admission price, full list of ammenities, full list of activities, use the URL to store parameters, i.e. 'american-advendures.com/?park=yell)
-- [] JSON file listing each park's full name and the park's assosciated code
-- [] JavaScript to communicate with NPS API, take user input and use async/await `fetch` to send the assosciated code to the API
+- [ ] Build search page (Live search, filters for states)
+- [ ] Build template for search result card (Display park name, a short discription, states, and admission price)
+- [ ] Build a page to dislpay more information about the park (Name, description, states, admission price, full list of ammenities, full list of activities, use the URL to store parameters, i.e. 'american-advendures.com/?park=yell)
+- [ ] JSON file listing each park's full name and the park's assosciated code
+- [ ] JavaScript to communicate with NPS API, take user input and use async/await `fetch` to send the assosciated code to the API
 - [x] Make info cards on search page grow on hover
-- [] Make dropdowns move smoothly
+- [ ] Make dropdowns move smoothly
