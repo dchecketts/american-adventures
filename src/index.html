@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>American Adventures</title>
+
+    <script type="module" src="/scripts/headerFooter.js" defer></script>
+
+    <!-- Optionally link to the tailwind sheet -->
+    <link rel="stylesheet" href="styles/tailwind.css">
+    <link rel="stylesheet" href="/styles/main.css" />
+  </head>
+  <body class="flex flex-col h-screen bg-gray-100">
+    <header></header>
+    <main class="grow">
+      <div id="search-area" class="mx-auto max-w-1/2 flex w-fit">
+        <label for="search" class="hidden">Search:</label>
+        <input id="search" type="text" class="border-2 m-3 rounded-sm min-w-9/10 px-2 bg-gray-50 focus:bg-gray-200 focus:outline-0 focus:scale-105 border-black text-gray-500 focus:text-black shadow-sm focus:shadow-md transition transform duration-300" placeholder="Yellowstone">
+        <div class="min-w-1/10 my-3">
+          <button type="submit" class="bg-gray-600 rounded-sm text-white hover:bg-gray-400 hover:text-gray-100 hover:scale-105 focus:bg-gray-400 focus:outline-0 focus:scale-105 p-2 shadow-sm focus:shadow-md hover:shadow-md transition transform duration-300">Search</button>
+          </div>
+        </div>
+        
+
+      <section id="search-results" class="flex flex-col gap-5 mx-auto max-w-1/2 my-10">
+        <a href="[Page link with park code]" class="w-full">
+          <div class="bg-white p-5 rounded-md hover:scale-110 transition transform duration-300 hover:shadow-lg">
+            <img src="#" alt="[Thumbnail]">
+            <p>Yellowstone</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+            </div>
+        </a>
+        <a href="[Page link with park code]" class="w-full">
+          <div class="bg-white p-5 rounded-md hover:scale-110 transition transform duration-300 hover:shadow-lg">
+            <img src="#" alt="[Thumbnail]">
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="[Page link with park code]" class="w-full">
+          <div class="bg-white p-5 rounded-md hover:scale-110 transition transform duration-300 hover:shadow-lg">
+            <img src="#" alt="[Thumbnail]">
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="[Page link with park code]" class="w-full">
+          <div class="bg-white p-5 rounded-md hover:scale-110 transition transform duration-300 hover:shadow-lg">
+            <img src="#" alt="[Thumbnail]">
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="[Page link with park code]" class="w-full">
+          <div class="bg-white p-5 rounded-md hover:scale-110 transition transform duration-300 hover:shadow-lg">
+            <img src="#" alt="[Thumbnail]">
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="[Page link with park code]" class="w-full">
+          <div class="bg-white p-5 rounded-md hover:scale-110 transition transform duration-300 hover:shadow-lg">
+            <img src="#" alt="[Thumbnail]">
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="[Page link with park code]" class="w-full">
+          <div class="bg-white p-5 rounded-md hover:scale-110 transition transform duration-300 hover:shadow-lg">
+            <img src="#" alt="[Thumbnail]">
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        
+      </section>
+      <p class="hidden">No parks found for your search.</p>
+    </main>
+    <footer></footer>
+  </body>
+</html>
