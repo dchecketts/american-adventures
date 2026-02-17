@@ -207,6 +207,9 @@
   .table {
     display: table;
   }
+  .h-fit {
+    height: fit-content;
+  }
   .h-full {
     height: 100%;
   }
