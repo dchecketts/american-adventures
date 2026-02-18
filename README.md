@@ -8,6 +8,16 @@ Search through the National Parks of the United States of America to find activi
 
 ## TODOS
 
+- [ ] One detailed, validated form (Search, filter options)
+- [ ] Local storage (Search history)
+- [ ] Fetch data from an API (NPS API)
+- [ ] Drop-down menu (Filter options)
+- [ ] CSS animation (Cards, drop-downs)
+- [ ] Responsive design (Mobile > Desktop)
+- [ ] Good UX & accesibility (Make the page capable of working if the CSS doesn't work)
+- [ ] URL parameters (Click on a card and see a page all about the national park)
+- [ ] Use modules (NPM, Vite, Husky)
+
 - [ ] Build search page (Live search, filters for states)
 - [ ] Build template for search result card (Display park name, a short description, states, and admission price)
 - [ ] Build a page to display more information about the park (Name, description, states, admission price, full list of
