@@ -1,4 +1,4 @@
-// Since the header and footer are unversal, I decided to consolidate them into a single JS file to be linked to each page
+// Since the header and footer are universal, I decided to consolidate them into a single JS file to be linked to each page
 
 async function initHeaderFooter() {
   const header = document.querySelector('header');
