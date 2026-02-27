@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>American Adventures</title>
+
+    <script type="module" src="scripts/headerFooter.js" defer></script>
+
+    <!-- Optionally link to the tailwind sheet -->
+    <link rel="stylesheet" href="styles/tailwind.css" />
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body class="flex h-screen grow flex-col bg-gray-100">
+    <header></header>
+    <main class="grow">
+      <div id="search-area" class="mx-auto flex w-fit max-w-1/2">
+        <label for="search" class="hidden">Search:</label>
+        <input
+          id="search"
+          type="text"
+          class="m-3 min-w-9/10 transform rounded-sm border-2 border-black bg-gray-50 px-2 text-gray-500 shadow-sm transition duration-300 focus:scale-105 focus:bg-gray-200 focus:text-black focus:shadow-md focus:outline-0"
+          placeholder="Yellowstone"
+        />
+        <div class="my-3 min-w-1/10">
+          <button
+            type="submit"
+            class="transform rounded-sm bg-gray-600 p-2 text-white shadow-sm transition duration-300 hover:scale-105 hover:bg-gray-400 hover:text-gray-100 hover:shadow-md focus:scale-105 focus:bg-gray-400 focus:shadow-md focus:outline-0"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+
+      <section
+        id="search-results"
+        class="mx-auto my-10 flex h-fit max-w-1/2 flex-col gap-5"
+      >
+        <a href="#" class="w-full">
+          <div
+            class="transform rounded-md bg-white p-5 transition duration-300 hover:scale-110 hover:shadow-lg"
+          >
+            <img src="#" alt="[Thumbnail]" />
+            <p>Yellowstone</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="#" class="w-full">
+          <div
+            class="transform rounded-md bg-white p-5 transition duration-300 hover:scale-110 hover:shadow-lg"
+          >
+            <img src="#" alt="[Thumbnail]" />
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="#" class="w-full">
+          <div
+            class="transform rounded-md bg-white p-5 transition duration-300 hover:scale-110 hover:shadow-lg"
+          >
+            <img src="#" alt="[Thumbnail]" />
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="#" class="w-full">
+          <div
+            class="transform rounded-md bg-white p-5 transition duration-300 hover:scale-110 hover:shadow-lg"
+          >
+            <img src="#" alt="[Thumbnail]" />
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="#" class="w-full">
+          <div
+            class="transform rounded-md bg-white p-5 transition duration-300 hover:scale-110 hover:shadow-lg"
+          >
+            <img src="#" alt="[Thumbnail]" />
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="#" class="w-full">
+          <div
+            class="transform rounded-md bg-white p-5 transition duration-300 hover:scale-110 hover:shadow-lg"
+          >
+            <img src="#" alt="[Thumbnail]" />
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+        <a href="#" class="w-full">
+          <div
+            class="transform rounded-md bg-white p-5 transition duration-300 hover:scale-110 hover:shadow-lg"
+          >
+            <img src="#" alt="[Thumbnail]" />
+            <p>[Name]</p>
+            <p>[States]</p>
+            <p>[Description]</p>
+            <p>[Admission]</p>
+          </div>
+        </a>
+      </section>
+      <p class="hidden">No parks found for your search.</p>
+    </main>
+    <footer></footer>
+  </body>
+</html>
