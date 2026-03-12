@@ -9,6 +9,18 @@ const __dirname = dirname(__filename);
 export default defineConfig({
   root: 'src',
 
+  server: {
+    port: 3000,
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000', 
+        changeOrigin: true, 
+        secure: false, 
+      },
+    },
+  },
+
   build: {
     outDir: '../dist',
     emptyOutDir: true,
@@ -23,9 +35,5 @@ export default defineConfig({
       ),
     },
   },
-
-  server: {
-    port: 3000,
-    open: true,
-  },
 });
+
