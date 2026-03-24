@@ -1,16 +1,67 @@
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>[Park Name]</title>
-  <link rel="stylesheet" href="../styles/main.css">
-  <script src="../scripts/headerFooter.js"></script>
-</head>
-<body>
-  <header>
-    <h1>Title</h1>
-  </header>
-  <main></main>
-  <footer></footer>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>American Adventures</title>
+    <script src="../scripts/headerFooter.js" defer></script>
+    <script type="module" src="../scripts/parks.js"></script>
+
+    <!-- Optionally link to the tailwind sheet -->
+    <link rel="stylesheet" href="../styles/tailwind.css" />
+    <link rel="stylesheet" href="../styles/main.css" />
+  </head>
+  <body class="flex h-screen w-screen flex-col">
+    <header></header>
+    <main class="flex grow flex-col p-5">
+      <section class="flex justify-between">
+        <div id="name">
+          <h2 class="text-center text-7xl lg:border-r-black lg:text-left">
+            Yellowstone
+          </h2>
+          <span class="ml-3">National Park</span>
+        </div>
+
+        <div>
+          <span id="latLong">44.59824417, -110.5471695</span>
+          <ul id="contact" class="mx-auto mt-2 flex max-w-7/10 justify-between">
+            <li>
+              <a href="#"
+                ><img
+                  src="../public/icons/phone.svg"
+                  alt="Phone"
+                  class="rounded-full bg-lime-900 p-1 text-white"
+              /></a>
+            </li>
+            <li>
+              <a href="#"
+                ><img
+                  src="../public/icons/map.svg"
+                  alt="Directions"
+                  class="rounded-full bg-lime-900 p-1 text-white"
+              /></a>
+            </li>
+            <li>
+              <a href="#"
+                ><img
+                  src="../public/icons/link.svg"
+                  alt="Website"
+                  class="rounded-full bg-lime-900 p-1 text-white"
+              /></a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <span
+        id="description"
+        class="mx-auto mt-5 max-w-7/10 rounded-md p-5 shadow-md"
+        >On March 1, 1872, Yellowstone became the first national park for all to
+        enjoy the unique hydrothermal wonders. Today, millions of people come
+        here each year to camp, hike, and enjoy the majesty of the park.</span
+      >
+
+      <section></section>
+    </main>
+    <footer></footer>
+  </body>
 </html>
