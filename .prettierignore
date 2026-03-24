@@ -4,3 +4,8 @@ src/styles/tailwind.css
 # Ignore build output
 dist/
 node_modules/
+
+# Other things
+vite.config.js
+server.js
+searchbar.js
