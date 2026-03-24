@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>American Adventures</title>
-    <script src="../scripts/headerFooter.js" defer></script>
+    <script type="module" src="../scripts/headerFooter.js"></script>
     <script type="module" src="../scripts/parks.js"></script>
 
     <!-- Optionally link to the tailwind sheet -->
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="../styles/main.css"/>
   </head>
   <body class="flex h-screen w-screen flex-col">
-    <header></header>
+    <header class="bg-lime-900 p-10 text-center text-white"></header>
     <main class="flex grow flex-col p-5">
       <section class="flex justify-between">
         <div id="name">
@@ -62,6 +62,6 @@
 
       <section></section>
     </main>
-    <footer></footer>
+    <footer class="bg-stone-600 p-5 text-center font-semibold text-white"></footer>
   </body>
 </html>

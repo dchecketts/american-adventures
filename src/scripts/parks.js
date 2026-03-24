@@ -39,13 +39,13 @@ async function init() {
   const contact = document.querySelector('#contact');
   // Phone
   const phoneContact = contact.querySelector(':nth-child(1)');
-  phoneContact.innerHTML = `<a href="tel:${parkInfo.contacts.phoneNumbers[0].phoneNumber}"><img src="../public/icons/phone.svg" alt="Phone" class="bg-lime-900 text-white rounded-full p-1"></a>`;
+  phoneContact.innerHTML = `<a href="tel:${parkInfo.contacts.phoneNumbers[0].phoneNumber}"><img src="/icons/phone.svg" alt="Phone" class="bg-lime-900 text-white rounded-full p-1"></a>`;
   // Address
   const addressContact = contact.querySelector(':nth-child(2)');
-  addressContact.innerHTML = `<a href="${parkInfo.directionsUrl}"><img src="../public/icons/map.svg" alt="Directions" class="bg-lime-900 text-white rounded-full p-1"></a>`;
+  addressContact.innerHTML = `<a href="${parkInfo.directionsUrl}"><img src="/icons/map.svg" alt="Directions" class="bg-lime-900 text-white rounded-full p-1"></a>`;
   // Website
   const websiteContact = contact.querySelector(':nth-child(3)');
-  websiteContact.innerHTML = `<a href="${parkInfo.url}"><img src="../public/icons/link.svg" alt="Website" class="bg-lime-900 text-white rounded-full p-1"></a>`;
+  websiteContact.innerHTML = `<a href="${parkInfo.url}"><img src="/icons/link.svg" alt="Website" class="bg-lime-900 text-white rounded-full p-1"></a>`;
 }
 
 init();

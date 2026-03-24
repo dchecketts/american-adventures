@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>American Adventures</title>
     
-    <script src="scripts/headerFooter.js" defer></script>
+    <script type="module" src="scripts/headerFooter.js"></script>
     <script type="module" src="scripts/main.js"></script>
 
     <!-- Optionally link to the tailwind sheet -->
@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="styles/main.css"/>
   </head>
   <body class="flex h-screen w-screen flex-col bg-gray-100">
-    <header></header>
+    <header class="bg-lime-900 p-10 text-center text-white"></header>
     <main class="grow">
       <div id="search-area" class="mx-auto flex w-fit max-w-1/2">
         <label for="search" class="sr-only">Search parks by name</label>
@@ -140,6 +140,6 @@
       </section>
       <p class="hidden">No parks found for your search.</p>
     </main>
-    <footer></footer>
+    <footer class="bg-stone-600 p-5 text-center font-semibold text-white"></footer>
   </body>
 </html>
