@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Files
+src/styles/tailwind.css
+vite.config.js
+
+# Other things
+server.js
+searchbar.js
