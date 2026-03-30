@@ -1,0 +1,214 @@
+.dual-range {
+  --min-percent: 0%;
+  --max-percent: 100%;
+  position: relative;
+  height: 2rem;
+}
+
+.dual-range::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: linear-gradient(
+	to right,
+	#d1d5db 0 var(--min-percent),
+	#65a30d var(--min-percent) var(--max-percent),
+	#d1d5db var(--max-percent) 100%
+  );
+  transform: translateY(-50%);
+}
+
+.dual-range__input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 2rem;
+  margin: 0;
+  background: transparent;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.dual-range__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  border: 2px solid #365314;
+  background: #84cc16;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.dual-range__input::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #365314;
+  border-radius: 999px;
+  background: #84cc16;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.dual-range__input::-webkit-slider-runnable-track {
+  background: transparent;
+}
+
+.dual-range__input::-moz-range-track {
+  background: transparent;
+}
+
+:root {
+  --motion-fast: 180ms;
+  --motion-medium: 280ms;
+  --motion-slow: 420ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Smooth in dynamic result cards whenever they are re-rendered. */
+#search-results > article,
+#saved-parks-results > article {
+  animation: soft-pop var(--motion-slow) var(--motion-ease) both;
+  will-change: transform, opacity;
+}
+
+#search-results > article:nth-child(2),
+#saved-parks-results > article:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+#search-results > article:nth-child(3),
+#saved-parks-results > article:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+#search-results > article:nth-child(4),
+#saved-parks-results > article:nth-child(4) {
+  animation-delay: 180ms;
+}
+
+/* Park detail blocks and media ease in for better visual flow. */
+#description,
+#gallery figure,
+#topics,
+#admission,
+#activities,
+#entrances,
+#hours,
+#weather {
+  animation: fade-up var(--motion-slow) var(--motion-ease) both;
+}
+
+/* Consistent interaction transitions across interactive controls. */
+button,
+select,
+input,
+#park-actions button,
+#contact a img,
+#search-results article,
+#saved-parks-results article,
+#gallery figure {
+  transition:
+    transform var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease),
+    opacity var(--motion-fast) var(--motion-ease);
+}
+
+#search-results article,
+#saved-parks-results article {
+  transform-origin: center;
+}
+
+#search-results article:hover,
+#saved-parks-results article:hover,
+#gallery figure:hover {
+  transform: translateY(-6px) scale(1.01);
+}
+
+#search-results article:focus-within,
+#saved-parks-results article:focus-within {
+  transform: translateY(-4px) scale(1.005);
+}
+
+#contact a img:hover,
+#park-actions button:hover,
+#search-submit:hover,
+#clear-filters:hover {
+  transform: translateY(-1px) scale(1.03);
+}
+
+#filters-panel {
+  animation: fade-up var(--motion-medium) var(--motion-ease) both;
+}
+
+#search-context-banner {
+  animation: fade-up var(--motion-medium) var(--motion-ease) both;
+}
+
+.loading-dot {
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 999px;
+  border: 2px solid #84cc16;
+  border-top-color: #365314;
+  animation: spin 700ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+
+

@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>American Adventures</title>
     <script type="module" src="../scripts/headerFooter.js"></script>
     <script type="module" src="../scripts/parks.js"></script>
@@ -10,20 +11,21 @@
     <link rel="stylesheet" href="../styles/tailwind.css"/>
     <link rel="stylesheet" href="../styles/main.css"/>
   </head>
-  <body class="flex h-screen w-screen flex-col">
-    <header class="bg-lime-900 p-10 text-center text-white"></header>
-    <main class="flex grow flex-col p-5">
-      <section class="flex justify-between">
+  <body class="flex min-h-screen w-full flex-col">
+  <header class="bg-lime-900 p-4 text-center text-white md:p-10"></header>
+    <main class="flex grow flex-col p-3 md:p-5">
+      <section class="mx-auto flex w-full max-w-5xl flex-col gap-4 md:flex-row md:justify-between">
         <div id="name">
-          <h2 class="text-center text-7xl lg:border-r-black lg:text-left">
+          <h2 class="text-4xl sm:text-5xl lg:border-r-black lg:text-left lg:text-7xl">
             Yellowstone
           </h2>
-          <span class="ml-3">National Park</span>
+          <span class="mt-1 block text-sm sm:text-base">National Park</span>
+          <p id="states" class="mt-1 text-sm text-gray-700">WY, MT, ID</p>
         </div>
 
-        <div>
-          <span id="latLong">44.59824417, -110.5471695</span>
-          <ul id="contact" class="mx-auto mt-2 flex max-w-7/10 justify-between">
+        <div class="md:text-right">
+          <span id="latLong" class="text-sm sm:text-base">44.59824417, -110.5471695</span>
+          <ul id="contact" class="mt-2 flex gap-3 md:justify-end">
             <li>
               <a href="#"
                 ><img
@@ -49,19 +51,77 @@
               /></a>
             </li>
           </ul>
+
+          <div id="park-actions" class="mt-3 flex gap-2 md:justify-end">
+            <button
+              id="share-park"
+              type="button"
+              class="rounded-md bg-lime-800 px-3 py-1 text-sm font-semibold text-white transition hover:bg-lime-700"
+            >
+              Share
+            </button>
+            <button
+              id="save-park"
+              type="button"
+              aria-pressed="false"
+              data-saved="false"
+              class="rounded-md border border-lime-800 bg-white px-3 py-1 text-sm font-semibold text-lime-800 transition hover:bg-lime-50"
+            >
+              Save
+            </button>
+          </div>
+          <p id="action-feedback" aria-live="polite" class="mt-2 text-sm text-gray-600 md:text-right"></p>
         </div>
       </section>
 
       <span
         id="description"
-        class="mx-auto mt-5 max-w-7/10 rounded-md p-5 shadow-md"
+        class="mx-auto mt-5 w-full max-w-5xl rounded-md p-4 shadow-md md:p-5"
         >On March 1, 1872, Yellowstone became the first national park for all to
         enjoy the unique hydrothermal wonders. Today, millions of people come
         here each year to camp, hike, and enjoy the majesty of the park.</span
       >
 
-      <section></section>
+      <section id="gallery" class="mx-auto mt-6 w-full max-w-5xl">
+        <h2 class="mb-4 text-2xl font-semibold">Gallery</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <!-- Gallery images will be inserted here -->
+        </div>
+      </section>
+      
+      <section class="mx-auto mt-6 grid w-full max-w-5xl gap-4 md:grid-cols-2">
+        <article id="topics" class="rounded-md bg-white p-4 shadow-md">
+          <h3 class="mb-2 text-xl font-semibold">Park Themes</h3>
+          <p class="text-sm text-gray-600">Loading themes...</p>
+        </article>
+
+        <article id="admission" class="rounded-md bg-white p-4 shadow-md">
+          <h3 class="mb-2 text-xl font-semibold">Admission Fees</h3>
+          <p class="text-sm text-gray-600">Loading admission information...</p>
+        </article>
+
+        <article id="activities" class="rounded-md bg-white p-4 shadow-md">
+          <h3 class="mb-2 text-xl font-semibold">Activities</h3>
+          <p class="text-sm text-gray-600">Loading activities...</p>
+        </article>
+
+        <article id="entrances" class="md:col-span-2 rounded-md bg-white p-4 shadow-md">
+          <h3 class="mb-2 text-xl font-semibold">Entrance Stations</h3>
+          <p class="text-sm text-gray-600">Loading entrances...</p>
+        </article>
+
+        <article id="hours" class="rounded-md bg-white p-4 shadow-md">
+          <h3 class="mb-2 text-xl font-semibold">Operating Hours</h3>
+          <p class="text-sm text-gray-600">Loading hours...</p>
+        </article>
+
+        <article id="weather" class="rounded-md bg-white p-4 shadow-md">
+          <h3 class="mb-2 text-xl font-semibold">Weather</h3>
+          <p class="text-sm text-gray-600">Loading weather information...</p>
+        </article>
+      </section>
+    
     </main>
-    <footer class="bg-stone-600 p-5 text-center font-semibold text-white"></footer>
+  <footer class="bg-stone-600 p-5 text-center font-semibold text-white"></footer>
   </body>
 </html>

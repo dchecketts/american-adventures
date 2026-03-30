@@ -890,5 +890,27 @@ export async function getParkData(parkCode) {
     data = await response.json();
   } else throw new Error("response not ok")
   return data.data[0]
-  
+}
+
+export async function getSearchResults(userQuery) {
+  const options = {
+    method: "GET",
+    headers: {
+      "X-Api-Key": apiKey
+    }
+  }
+
+  const query = (userQuery ?? '').trim()
+  const endpoint = new URL(baseUrl + 'parks')
+  endpoint.searchParams.set('limit', '500')
+  if (query) {
+    endpoint.searchParams.set('q', query)
+  }
+
+  let data = {}
+  const response = await fetch(endpoint.toString(), options)
+  if (response.ok) {
+    data = await response.json();
+  } else throw new Error("response not ok")
+  return data.data
 }
