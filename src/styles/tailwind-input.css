@@ -1,10 +1,27 @@
+@import './main.css';
 @import 'tailwindcss';
 
-@theme {
-  --color-college: #0498d5;
-  --color-college-shade: #088ac2;
-  --color-club: #1ab369;
-  --color-club-shade: #00b297;
-  --color-undergrad: #bcd631;
-  --color-undergrad-shade: #7dc144;
+@theme inline {
+  /* Forest palette utilities: bg-forest-*, text-forest-*, border-forest-* */
+  --color-forest-canopy: var(--forest-canopy);
+  --color-forest-pine: var(--forest-pine);
+  --color-forest-cedar: var(--forest-cedar);
+  --color-forest-fir: var(--forest-fir);
+  --color-forest-moss: var(--forest-moss);
+  --color-forest-bark: var(--forest-bark);
+  --color-forest-mist: var(--forest-mist);
+  --color-forest-fog: var(--forest-fog);
+  --color-forest-ink: var(--forest-ink);
+
+  /* Semantic aliases to avoid coupling component styles to raw palette names */
+  --color-surface: var(--ui-surface);
+  --color-surface-elevated: var(--ui-surface-elevated);
+  --color-surface-subtle: var(--ui-surface-subtle);
+  --color-text-primary: var(--ui-text-primary);
+  --color-text-muted: var(--ui-text-muted);
+  --color-border-subtle: var(--ui-border-subtle);
+  --color-border-strong: var(--ui-border-strong);
+  --color-cta: var(--ui-cta);
+  --color-cta-hover: var(--ui-cta-hover);
+  --color-focus: var(--ui-focus);
 }

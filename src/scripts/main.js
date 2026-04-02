@@ -1,34 +1,47 @@
 import { getParkData, getSearchResults } from './parkService.mjs';
+import { applyThemeIcons } from './themeIcons.js';
 
-const SEARCH_DEBOUNCE_MS = 200;
+const SEARCH_DEBOUNCE_MS = 250;
+const URL_REPLACE_DEBOUNCE_MS = 300;
 const SAVED_PARKS_KEY = 'savedParks';
 const DEFAULT_PRICE_MAX = 200;
-const DEFAULT_INITIAL_QUERY = 'park';
+const DEFAULT_INITIAL_QUERY = '';
+const MIN_STRICT_QUERY_LENGTH = 3;
 
 // Centralize classes so restyling is easy in one place.
 // Any utility class that appears in templates should live here.
 const CLASSES = {
-  card: 'rounded-md bg-white p-5 shadow-sm transition duration-300 hover:shadow-md',
+  card: 'rounded-md border border-border-subtle bg-surface-elevated p-5 shadow-sm transition duration-300 hover:shadow-md',
   cardLink: 'block md:flex md:gap-3',
   cardImage: 'aspect-square w-full rounded-md object-cover md:max-w-1/3',
   cardBody: 'mt-3 flex-1 md:mt-0 md:flex md:flex-col',
   cardTitle: 'text-lg font-bold',
-  cardStates: 'text-sm text-gray-600',
-  cardDescription: 'mt-2 text-sm text-gray-800',
+  cardStates: 'text-sm text-text-muted',
+  cardDescription: 'mt-2 text-sm text-text-primary',
   cardAdmission: 'mt-3 font-semibold',
   cardActionsRow: 'mt-4 flex justify-end gap-2',
-  shareButton: 'rounded-md bg-lime-800 p-2 text-white transition hover:bg-lime-700',
-  saveButtonActive: 'rounded-md border border-lime-800 bg-lime-800 p-2 text-white transition',
-  saveButtonInactive: 'rounded-md border border-lime-800 bg-white p-2 text-lime-800 transition hover:bg-lime-50',
+  shareButton: 'rounded-md bg-cta p-2 text-white transition hover:bg-cta-hover',
+  saveButtonActive:
+    'rounded-md border border-cta bg-cta p-2 text-white transition',
+  saveButtonInactive:
+    'rounded-md border border-cta bg-surface-elevated p-2 text-cta transition hover:bg-surface-subtle',
   icon: 'h-5 w-5',
-  infoText: 'text-sm text-gray-600',
+  infoText: 'text-sm text-text-muted',
   sectionTitle: 'text-xl font-bold',
 };
 
 // Visual templates are centralized here so layout edits do not require changing
 // search/filter business logic below.
 const TEMPLATES = {
-  parkCard: ({ park, isSaved, imageUrl, imageAlt, lowCost, highCost, saveIcon }) => `
+  parkCard: ({
+    park,
+    isSaved,
+    imageUrl,
+    imageAlt,
+    lowCost,
+    highCost,
+    saveIcon,
+  }) => `
   <article class="${CLASSES.card}">
     <a href="/park/?code=${park.parkCode}" class="${CLASSES.cardLink}">
       <img class="${CLASSES.cardImage}" src="${imageUrl}" alt="${imageAlt}"/>
@@ -48,7 +61,7 @@ const TEMPLATES = {
         aria-label="Share ${park.fullName}"
         class="${CLASSES.shareButton}"
       >
-        <img src="/icons/share.svg" alt="" class="${CLASSES.icon}" />
+        <img src="/icons/share.svg" alt="" data-theme-icon class="${CLASSES.icon}" />
       </button>
       <button
         type="button"
@@ -60,7 +73,7 @@ const TEMPLATES = {
         aria-label="${isSaved ? 'Remove' : 'Save'} ${park.fullName}"
         class="${isSaved ? CLASSES.saveButtonActive : CLASSES.saveButtonInactive}"
       >
-        <img src="${saveIcon}" alt="" class="${CLASSES.icon}" />
+        <img src="${saveIcon}" alt="" data-theme-icon class="${CLASSES.icon}" />
       </button>
     </div>
   </article>`,
@@ -68,21 +81,77 @@ const TEMPLATES = {
       <h2 class="${CLASSES.sectionTitle}">Your Saved Parks</h2>
       ${cardsMarkup}
     `,
-  emptySearchPrompt: () => `<p class="${CLASSES.infoText}">Search for a park to see results.</p>`,
-  noSearchMatches: () => `<p class="${CLASSES.infoText}">No parks matched your current search and filters.</p>`,
-  noFilterMatches: () => `<p class="${CLASSES.infoText}">No results match your current filters.</p>`,
-  savedEmpty: () => '<p class="text-sm text-gray-600">You have not saved any parks yet.</p>',
-  savedLoading: () => '<p class="text-sm text-gray-600">Loading saved parks...</p>',
-  savedLoadFailed: () => '<p class="text-sm text-gray-600">Saved parks could not be loaded right now.</p>',
+  emptySearchPrompt: () =>
+    `<p class="${CLASSES.infoText}">Search for a park to see results.</p>`,
+  noSearchMatches: () =>
+    `<p class="${CLASSES.infoText}">No parks matched your current search and filters.</p>`,
+  noFilterMatches: () =>
+    `<p class="${CLASSES.infoText}">No results match your current filters.</p>`,
+  savedEmpty: () =>
+    '<p class="text-sm text-text-muted">You have not saved any parks yet.</p>',
+  savedLoading: () =>
+    '<p class="text-sm text-text-muted">Loading saved parks...</p>',
+  savedLoadFailed: () =>
+    '<p class="text-sm text-text-muted">Saved parks could not be loaded right now.</p>',
 };
 
 const ALL_STATE_CODES = [
-  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-  'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-  'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-  'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
-  'DC', 'PR', 'VI', 'GU', 'AS', 'MP'
+  'AL',
+  'AK',
+  'AZ',
+  'AR',
+  'CA',
+  'CO',
+  'CT',
+  'DE',
+  'FL',
+  'GA',
+  'HI',
+  'ID',
+  'IL',
+  'IN',
+  'IA',
+  'KS',
+  'KY',
+  'LA',
+  'ME',
+  'MD',
+  'MA',
+  'MI',
+  'MN',
+  'MS',
+  'MO',
+  'MT',
+  'NE',
+  'NV',
+  'NH',
+  'NJ',
+  'NM',
+  'NY',
+  'NC',
+  'ND',
+  'OH',
+  'OK',
+  'OR',
+  'PA',
+  'RI',
+  'SC',
+  'SD',
+  'TN',
+  'TX',
+  'UT',
+  'VT',
+  'VA',
+  'WA',
+  'WV',
+  'WI',
+  'WY',
+  'DC',
+  'PR',
+  'VI',
+  'GU',
+  'AS',
+  'MP',
 ];
 
 const URL_PARAMS = {
@@ -91,7 +160,7 @@ const URL_PARAMS = {
   activity: 'activity',
   state: 'state',
   minPrice: 'minPrice',
-  maxPrice: 'maxPrice'
+  maxPrice: 'maxPrice',
 };
 
 // Runtime state container to keep async search/filter behavior deterministic.
@@ -109,7 +178,8 @@ const state = {
     usState: '',
     minPrice: 0,
     maxPrice: DEFAULT_PRICE_MAX,
-  }
+  },
+  hasHydratedPriceFilters: false,
 };
 
 let feedbackTimerId;
@@ -120,7 +190,11 @@ function toTitleCase(value) {
   return (value ?? '')
     .split(' ')
     .filter(Boolean)
-    .map((word) => (romanNumerals.test(word) ? word.toUpperCase() : `${word[0]?.toUpperCase() ?? ''}${word.slice(1).toLowerCase()}`))
+    .map((word) =>
+      romanNumerals.test(word)
+        ? word.toUpperCase()
+        : `${word[0]?.toUpperCase() ?? ''}${word.slice(1).toLowerCase()}`
+    )
     .join(' ');
 }
 
@@ -177,7 +251,7 @@ function setActionFeedback(message, isError = false) {
   clearTimeout(feedbackTimerId);
   feedback.textContent = message;
   feedback.classList.toggle('text-red-700', isError);
-  feedback.classList.toggle('text-gray-600', !isError);
+  feedback.classList.toggle('text-text-muted', !isError);
 
   feedbackTimerId = setTimeout(() => {
     feedback.textContent = '';
@@ -216,8 +290,13 @@ async function copyTextToClipboard(text) {
 
 /** Share a park URL via native share if possible, otherwise copy to clipboard. */
 async function sharePark(parkCode, parkName) {
-  const shareUrl = new URL(`/park/?code=${parkCode}`, window.location.origin).href;
-  const shareData = { title: parkName, text: `Check out ${parkName}`, url: shareUrl };
+  const shareUrl = new URL(`/park/?code=${parkCode}`, window.location.origin)
+    .href;
+  const shareData = {
+    title: parkName,
+    text: `Check out ${parkName}`,
+    url: shareUrl,
+  };
 
   if (navigator.share) {
     try {
@@ -233,14 +312,18 @@ async function sharePark(parkCode, parkName) {
   }
 
   const copied = await copyTextToClipboard(shareUrl);
-  setActionFeedback(copied ? 'Link copied to clipboard.' : 'Unable to share or copy link.', !copied);
+  setActionFeedback(
+    copied ? 'Link copied to clipboard.' : 'Unable to share or copy link.',
+    !copied
+  );
 }
 
 /** Compute low/high admission fees from a park record. */
 function getAdmissionRange(park) {
-  const fees = park.entranceFees
-    ?.map((fee) => Number(fee.cost))
-    .filter((cost) => Number.isFinite(cost)) ?? [];
+  const fees =
+    park.entranceFees
+      ?.map((fee) => Number(fee.cost))
+      .filter((cost) => Number.isFinite(cost)) ?? [];
 
   if (!fees.length) return { low: 0, high: 0 };
   return { low: Math.min(...fees), high: Math.max(...fees) };
@@ -256,7 +339,7 @@ function parkMatchesPriceRange(park, minPrice, maxPrice) {
 
 /** Calculate global min/max fee bounds for slider setup. */
 function getPriceBounds(parks) {
-  const source = parks.length ? parks : getFilterSourceParks();
+  const source = Array.isArray(parks) ? parks : [];
   if (!source.length) return { min: 0, max: DEFAULT_PRICE_MAX };
 
   const values = source.flatMap((park) => {
@@ -273,7 +356,8 @@ function getPriceBounds(parks) {
 }
 
 /** Keep URL query params in sync with search/filter state. */
-function updateUrlFromState() {
+function updateUrlFromState({ historyMode = 'push' } = {}) {
+  const currentUrl = `${window.location.pathname}${window.location.search}`;
   const url = new URL(window.location.href);
   const params = url.searchParams;
 
@@ -303,21 +387,37 @@ function updateUrlFromState() {
   }
 
   const nextQuery = params.toString();
-  window.history.replaceState({}, '', nextQuery ? `${url.pathname}?${nextQuery}` : url.pathname);
+  const nextUrl = nextQuery ? `${url.pathname}?${nextQuery}` : url.pathname;
+  if (nextUrl === currentUrl) return;
+
+  if (historyMode === 'replace') {
+    window.history.replaceState({}, '', nextUrl);
+    return;
+  }
+
+  window.history.pushState({}, '', nextUrl);
 }
 
 /** Hydrate state from URL params on initial load. */
 function hydrateStateFromUrl() {
   const params = new URLSearchParams(window.location.search);
   state.searchQuery = (params.get(URL_PARAMS.query) ?? '').trim();
-  state.activeFilters.theme = (params.get(URL_PARAMS.theme) ?? '').trim().toLowerCase();
-  state.activeFilters.activity = (params.get(URL_PARAMS.activity) ?? '').trim().toLowerCase();
-  state.activeFilters.usState = (params.get(URL_PARAMS.state) ?? '').trim().toUpperCase();
+  state.activeFilters.theme = (params.get(URL_PARAMS.theme) ?? '')
+    .trim()
+    .toLowerCase();
+  state.activeFilters.activity = (params.get(URL_PARAMS.activity) ?? '')
+    .trim()
+    .toLowerCase();
+  state.activeFilters.usState = (params.get(URL_PARAMS.state) ?? '')
+    .trim()
+    .toUpperCase();
 
   const minPrice = Number(params.get(URL_PARAMS.minPrice));
   const maxPrice = Number(params.get(URL_PARAMS.maxPrice));
   if (Number.isFinite(minPrice)) state.activeFilters.minPrice = minPrice;
   if (Number.isFinite(maxPrice)) state.activeFilters.maxPrice = maxPrice;
+  state.hasHydratedPriceFilters =
+    params.has(URL_PARAMS.minPrice) || params.has(URL_PARAMS.maxPrice);
 }
 
 /** Update text label that shows selected price range. */
@@ -374,12 +474,14 @@ function applyDefaultPriceRange() {
 
 /** Determine whether any non-default filter is active. */
 function hasActiveFilters() {
-  const hasSelectionFilter = Boolean(state.activeFilters.theme)
-    || Boolean(state.activeFilters.activity)
-    || Boolean(state.activeFilters.usState);
+  const hasSelectionFilter =
+    Boolean(state.activeFilters.theme) ||
+    Boolean(state.activeFilters.activity) ||
+    Boolean(state.activeFilters.usState);
 
-  const hasPriceFilter = state.activeFilters.minPrice > state.priceBounds.min
-    || state.activeFilters.maxPrice < state.priceBounds.max;
+  const hasPriceFilter =
+    state.activeFilters.minPrice > state.priceBounds.min ||
+    state.activeFilters.maxPrice < state.priceBounds.max;
 
   return hasSelectionFilter || hasPriceFilter;
 }
@@ -387,14 +489,20 @@ function hasActiveFilters() {
 /** Build readable list of active filter phrases for context banner. */
 function getActiveFilterSummaryParts() {
   const parts = [];
-  if (state.activeFilters.theme) parts.push(`Theme: ${toTitleCase(state.activeFilters.theme)}`);
-  if (state.activeFilters.activity) parts.push(`Activity: ${toTitleCase(state.activeFilters.activity)}`);
-  if (state.activeFilters.usState) parts.push(`State: ${state.activeFilters.usState}`);
+  if (state.activeFilters.theme)
+    parts.push(`Theme: ${toTitleCase(state.activeFilters.theme)}`);
+  if (state.activeFilters.activity)
+    parts.push(`Activity: ${toTitleCase(state.activeFilters.activity)}`);
+  if (state.activeFilters.usState)
+    parts.push(`State: ${state.activeFilters.usState}`);
 
-  const usingCustomPrice = state.activeFilters.minPrice > state.priceBounds.min
-    || state.activeFilters.maxPrice < state.priceBounds.max;
+  const usingCustomPrice =
+    state.activeFilters.minPrice > state.priceBounds.min ||
+    state.activeFilters.maxPrice < state.priceBounds.max;
   if (usingCustomPrice) {
-    parts.push(`Admission: $${state.activeFilters.minPrice}-$${state.activeFilters.maxPrice}`);
+    parts.push(
+      `Admission: $${state.activeFilters.minPrice}-$${state.activeFilters.maxPrice}`
+    );
   }
   return parts;
 }
@@ -413,9 +521,13 @@ function renderSearchContextBanner(filteredCount, totalCount) {
     return;
   }
 
-  const scope = hasQuery ? `Search: "${state.searchQuery}"` : 'Showing parks by filters';
+  const scope = hasQuery
+    ? `Search: "${state.searchQuery}"`
+    : 'Showing parks by filters';
   const countText = `Showing ${filteredCount} of ${totalCount} parks`;
-  const detailText = activeFilterParts.length ? ` | ${activeFilterParts.join(' | ')}` : '';
+  const detailText = activeFilterParts.length
+    ? ` | ${activeFilterParts.join(' | ')}`
+    : '';
   banner.textContent = `${scope} | ${countText}${detailText}`;
   banner.classList.remove('hidden');
 }
@@ -441,20 +553,98 @@ function searchCardTemplate(park, isSaved = false) {
 /** Debounce helper for throttling high-frequency events like typing. */
 function debounce(fn, delay = 300) {
   let timeoutId;
-  return (...args) => {
+
+  const debounced = (...args) => {
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
+    timeoutId = setTimeout(() => {
+      timeoutId = undefined;
+      fn(...args);
+    }, delay);
   };
+
+  debounced.cancel = () => {
+    clearTimeout(timeoutId);
+    timeoutId = undefined;
+  };
+
+  return debounced;
+}
+
+/** Normalize user/API text to make contains checks case/space-insensitive. */
+function normalizeSearchText(value) {
+  return (value ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Hybrid query rule:
+ * - Multi-word queries use strict fullName containment.
+ * - Single-word queries use strict word-level matching when query is meaningful.
+ * - If no strict matches exist, keep API results as fallback.
+ */
+function applyHybridQueryRule(parks, query) {
+  if (!Array.isArray(parks)) return [];
+
+  const normalizedQuery = normalizeSearchText(query);
+  if (!normalizedQuery) return parks;
+
+  const queryWords = normalizedQuery.split(' ').filter(Boolean);
+  const isMultiWordQuery = queryWords.length > 1;
+
+  // Very short queries should be broad but still query-aware.
+  if (!isMultiWordQuery && normalizedQuery.length < MIN_STRICT_QUERY_LENGTH) {
+    const broadMatches = parks.filter((park) =>
+      normalizeSearchText(park?.fullName).includes(normalizedQuery)
+    );
+    return broadMatches.length ? broadMatches : parks;
+  }
+
+  if (isMultiWordQuery) {
+    const strictPhraseMatches = parks.filter((park) =>
+      normalizeSearchText(park?.fullName).includes(normalizedQuery)
+    );
+
+    return strictPhraseMatches.length ? strictPhraseMatches : parks;
+  }
+
+  const strictWordMatches = parks.filter((park) =>
+    normalizeSearchText(park?.fullName)
+      .split(' ')
+      .some((word) => word.includes(normalizedQuery))
+  );
+
+  return strictWordMatches.length ? strictWordMatches : parks;
+}
+
+/** Use the broader catalog for all single-word queries (e.g., "yel", "yellow"). */
+function shouldUseCatalogForSingleWordQuery(query) {
+  const normalizedQuery = normalizeSearchText(query);
+  if (!normalizedQuery) return false;
+
+  const queryWords = normalizedQuery.split(' ').filter(Boolean);
+  return queryWords.length === 1;
 }
 
 /** Check whether one park matches all active filters. */
 function parkMatchesFilters(park, filters) {
-  const themeMatch = !filters.theme || (park.topics ?? []).some((topic) => topic.name.toLowerCase() === filters.theme);
-  const activityMatch = !filters.activity || (park.activities ?? []).some((activity) => activity.name.toLowerCase() === filters.activity);
+  const themeMatch =
+    !filters.theme ||
+    (park.topics ?? []).some(
+      (topic) => topic.name.toLowerCase() === filters.theme
+    );
+  const activityMatch =
+    !filters.activity ||
+    (park.activities ?? []).some(
+      (activity) => activity.name.toLowerCase() === filters.activity
+    );
   // State filter matches if the selected two-letter code exists in the park's
   // comma-separated states field (e.g., Yellowstone matches ID, MT, and WY).
-  const stateMatch = !filters.usState || parseParkStates(park.states).includes(filters.usState);
-  const priceMatch = parkMatchesPriceRange(park, filters.minPrice, filters.maxPrice);
+  const stateMatch =
+    !filters.usState || parseParkStates(park.states).includes(filters.usState);
+  const priceMatch = parkMatchesPriceRange(
+    park,
+    filters.minPrice,
+    filters.maxPrice
+  );
   return themeMatch && activityMatch && stateMatch && priceMatch;
 }
 
@@ -463,7 +653,11 @@ function getFilteredResults() {
   // If a park is saved, we intentionally hide it from search cards so users
   // do not see the same park duplicated in both lists.
   const savedCodes = getSavedParks();
-  return state.allResults.filter((park) => parkMatchesFilters(park, state.activeFilters) && !savedCodes.includes(park.parkCode));
+  return state.allResults.filter(
+    (park) =>
+      parkMatchesFilters(park, state.activeFilters) &&
+      !savedCodes.includes(park.parkCode)
+  );
 }
 
 /** Unique + alphabetic sort helper. */
@@ -484,21 +678,45 @@ function updateFilterOptions() {
   if (!themeSelect || !activitySelect || !stateSelect) return;
 
   const sourceParks = getFilterSourceParks();
-  const themes = getUniqueSorted(sourceParks.flatMap((park) => (park.topics ?? []).map((topic) => topic.name.trim())).filter(Boolean));
-  const activities = getUniqueSorted(sourceParks.flatMap((park) => (park.activities ?? []).map((activity) => activity.name.trim())).filter(Boolean));
-  const states = getUniqueSorted([...ALL_STATE_CODES, ...sourceParks.flatMap((park) => parseParkStates(park.states))]);
+  const themes = getUniqueSorted(
+    sourceParks
+      .flatMap((park) => (park.topics ?? []).map((topic) => topic.name.trim()))
+      .filter(Boolean)
+  );
+  const activities = getUniqueSorted(
+    sourceParks
+      .flatMap((park) =>
+        (park.activities ?? []).map((activity) => activity.name.trim())
+      )
+      .filter(Boolean)
+  );
+  const states = getUniqueSorted([
+    ...ALL_STATE_CODES,
+    ...sourceParks.flatMap((park) => parseParkStates(park.states)),
+  ]);
 
   themeSelect.innerHTML = `<option value="">All themes</option>${themes.map((item) => `<option value="${item.toLowerCase()}">${item}</option>`).join('')}`;
   activitySelect.innerHTML = `<option value="">All activities</option>${activities.map((item) => `<option value="${item.toLowerCase()}">${item}</option>`).join('')}`;
   stateSelect.innerHTML = `<option value="">All states</option>${states.map((item) => `<option value="${item}">${item}</option>`).join('')}`;
 
-  if (state.activeFilters.theme && !themes.some((item) => item.toLowerCase() === state.activeFilters.theme)) {
+  if (
+    state.activeFilters.theme &&
+    !themes.some((item) => item.toLowerCase() === state.activeFilters.theme)
+  ) {
     state.activeFilters.theme = '';
   }
-  if (state.activeFilters.activity && !activities.some((item) => item.toLowerCase() === state.activeFilters.activity)) {
+  if (
+    state.activeFilters.activity &&
+    !activities.some(
+      (item) => item.toLowerCase() === state.activeFilters.activity
+    )
+  ) {
     state.activeFilters.activity = '';
   }
-  if (state.activeFilters.usState && !states.includes(state.activeFilters.usState)) {
+  if (
+    state.activeFilters.usState &&
+    !states.includes(state.activeFilters.usState)
+  ) {
     state.activeFilters.usState = '';
   }
 
@@ -506,10 +724,7 @@ function updateFilterOptions() {
   activitySelect.value = state.activeFilters.activity;
   stateSelect.value = state.activeFilters.usState;
 
-  state.priceBounds = getPriceBounds(state.allResults);
-  if (!state.searchQuery && !state.allResults.length) {
-    applyDefaultPriceRange();
-  }
+  state.priceBounds = getPriceBounds(getFilterSourceParks());
   syncPriceInputs();
 }
 
@@ -526,6 +741,7 @@ function renderSearchResults() {
     container.innerHTML = TEMPLATES.idleSavedSection(
       state.savedParks.map((park) => searchCardTemplate(park, true)).join('')
     );
+    applyThemeIcons(container);
     return;
   }
 
@@ -533,9 +749,10 @@ function renderSearchResults() {
 
   if (!state.allResults.length) {
     renderSearchContextBanner(0, 0);
-    container.innerHTML = hasActiveFilters() || state.searchQuery
-      ? TEMPLATES.noSearchMatches()
-      : TEMPLATES.emptySearchPrompt();
+    container.innerHTML =
+      hasActiveFilters() || state.searchQuery
+        ? TEMPLATES.noSearchMatches()
+        : TEMPLATES.emptySearchPrompt();
     return;
   }
 
@@ -546,7 +763,10 @@ function renderSearchResults() {
     return;
   }
 
-  container.innerHTML = filtered.map((park) => searchCardTemplate(park, isParkSaved(park.parkCode))).join('');
+  container.innerHTML = filtered
+    .map((park) => searchCardTemplate(park, isParkSaved(park.parkCode)))
+    .join('');
+  applyThemeIcons(container);
 }
 
 /** Render lower saved parks section and cache objects for idle view. */
@@ -562,7 +782,9 @@ async function renderSavedParks() {
   }
 
   savedContainer.innerHTML = TEMPLATES.savedLoading();
-  const responses = await Promise.allSettled(savedCodes.map((code) => getParkData(code)));
+  const responses = await Promise.allSettled(
+    savedCodes.map((code) => getParkData(code))
+  );
   const parks = responses
     .filter((result) => result.status === 'fulfilled' && result.value)
     .map((result) => result.value);
@@ -573,7 +795,10 @@ async function renderSavedParks() {
     return;
   }
 
-  savedContainer.innerHTML = parks.map((park) => searchCardTemplate(park, true)).join('');
+  savedContainer.innerHTML = parks
+    .map((park) => searchCardTemplate(park, true))
+    .join('');
+  await applyThemeIcons(savedContainer);
 }
 
 /** Fetch park search results from API. Empty query means unscoped park list. */
@@ -621,35 +846,51 @@ function setupFilterControls(onFiltersChanged) {
   const minPriceInput = document.querySelector('#price-min');
   const maxPriceInput = document.querySelector('#price-max');
   const clearButton = document.querySelector('#clear-filters');
-  if (!themeSelect || !activitySelect || !stateSelect || !minPriceInput || !maxPriceInput || !clearButton) return;
+  if (
+    !themeSelect ||
+    !activitySelect ||
+    !stateSelect ||
+    !minPriceInput ||
+    !maxPriceInput ||
+    !clearButton
+  )
+    return;
 
   themeSelect.addEventListener('change', async (event) => {
     state.activeFilters.theme = event.target.value;
-    await onFiltersChanged();
+    await onFiltersChanged('push');
   });
 
   activitySelect.addEventListener('change', async (event) => {
     state.activeFilters.activity = event.target.value;
-    await onFiltersChanged();
+    await onFiltersChanged('push');
   });
 
   stateSelect.addEventListener('change', async (event) => {
     state.activeFilters.usState = event.target.value;
-    await onFiltersChanged();
+    await onFiltersChanged('push');
   });
 
   minPriceInput.addEventListener('input', async (event) => {
     const value = Number(event.target.value);
-    state.activeFilters.minPrice = clamp(value, state.priceBounds.min, state.activeFilters.maxPrice);
+    state.activeFilters.minPrice = clamp(
+      value,
+      state.priceBounds.min,
+      state.activeFilters.maxPrice
+    );
     syncPriceInputs();
-    await onFiltersChanged();
+    await onFiltersChanged('replace');
   });
 
   maxPriceInput.addEventListener('input', async (event) => {
     const value = Number(event.target.value);
-    state.activeFilters.maxPrice = clamp(value, state.activeFilters.minPrice, state.priceBounds.max);
+    state.activeFilters.maxPrice = clamp(
+      value,
+      state.activeFilters.minPrice,
+      state.priceBounds.max
+    );
     syncPriceInputs();
-    await onFiltersChanged();
+    await onFiltersChanged('replace');
   });
 
   clearButton.addEventListener('click', async () => {
@@ -661,7 +902,7 @@ function setupFilterControls(onFiltersChanged) {
     activitySelect.value = '';
     stateSelect.value = '';
     syncPriceInputs();
-    await onFiltersChanged();
+    await onFiltersChanged('push');
   });
 }
 
@@ -687,7 +928,9 @@ function setupCardActions() {
 
     if (action === 'save') {
       const isNowSaved = toggleSavedPark(parkCode);
-      setActionFeedback(isNowSaved ? 'Park saved.' : 'Park removed from saved list.');
+      setActionFeedback(
+        isNowSaved ? 'Park saved.' : 'Park removed from saved list.'
+      );
       await renderSavedParks();
       renderSearchResults();
     }
@@ -707,25 +950,38 @@ async function init() {
   searchField.value = state.searchQuery;
 
   let lastRequestId = 0;
+  const debouncedUrlReplace = debounce(
+    () => updateUrlFromState({ historyMode: 'replace' }),
+    URL_REPLACE_DEBOUNCE_MS
+  );
 
-  const runSearch = async (query, requestId = 0) => {
+  const runSearch = async (
+    query,
+    requestId = 0,
+    { historyMode = 'push' } = {}
+  ) => {
     beginSearchLoading();
     try {
       const parks = await searchParks(query);
       if (requestId && requestId !== lastRequestId) return;
 
-      state.allResults = parks;
+      const sourceParks =
+        shouldUseCatalogForSingleWordQuery(query) && state.filterCatalog.length
+          ? state.filterCatalog
+          : parks;
+
+      state.allResults = applyHybridQueryRule(sourceParks, query);
       state.lastFetchedQuery = query;
       updateFilterOptions();
       renderSearchResults();
-      updateUrlFromState();
+      updateUrlFromState({ historyMode });
     } catch (error) {
       console.error('Search failed:', error);
       state.allResults = [];
       state.lastFetchedQuery = query;
       updateFilterOptions();
       renderSearchResults();
-      updateUrlFromState();
+      updateUrlFromState({ historyMode });
     } finally {
       endSearchLoading();
     }
@@ -733,48 +989,54 @@ async function init() {
 
   const debouncedSearch = debounce((query) => {
     const requestId = ++lastRequestId;
-    runSearch(query, requestId);
+    runSearch(query, requestId, { historyMode: 'replace' });
   }, SEARCH_DEBOUNCE_MS);
 
   const submitSearch = async () => {
     const query = searchField.value.trim();
     state.searchQuery = query;
     const requestId = ++lastRequestId;
+    debouncedUrlReplace.cancel();
+    updateUrlFromState({ historyMode: 'push' });
 
     if (!query && !hasActiveFilters()) {
       state.allResults = [];
       state.lastFetchedQuery = null;
       updateFilterOptions();
       renderSearchResults();
-      updateUrlFromState();
+      updateUrlFromState({ historyMode: 'push' });
       return;
     }
 
-    await runSearch(query, requestId);
+    await runSearch(query, requestId, { historyMode: 'push' });
   };
 
-  const handleFiltersChanged = async () => {
+  const handleFiltersChanged = async (historyMode = 'push') => {
+    if (historyMode === 'push') {
+      debouncedUrlReplace.cancel();
+    }
+
     if (!state.searchQuery && !hasActiveFilters()) {
       state.allResults = [];
       state.lastFetchedQuery = null;
       updateFilterOptions();
       renderSearchResults();
-      updateUrlFromState();
+      updateUrlFromState({ historyMode });
       return;
     }
 
     if (!state.searchQuery && hasActiveFilters()) {
       if (state.lastFetchedQuery !== '') {
-        await runSearch('');
+        await runSearch('', 0, { historyMode });
         return;
       }
       renderSearchResults();
-      updateUrlFromState();
+      updateUrlFromState({ historyMode });
       return;
     }
 
     renderSearchResults();
-    updateUrlFromState();
+    updateUrlFromState({ historyMode });
   };
 
   setupFilterControls(handleFiltersChanged);
@@ -783,7 +1045,9 @@ async function init() {
 
   if (state.filterCatalog.length && !state.allResults.length) {
     state.priceBounds = getPriceBounds(state.filterCatalog);
-    applyDefaultPriceRange();
+    if (!state.hasHydratedPriceFilters) {
+      applyDefaultPriceRange();
+    }
   }
 
   updateFilterOptions();
@@ -802,33 +1066,34 @@ async function init() {
   searchField.addEventListener('input', async (event) => {
     const query = event.target.value.trim();
     state.searchQuery = query;
+    debouncedUrlReplace();
 
     if (!query) {
+      debouncedSearch.cancel();
       lastRequestId += 1;
       if (hasActiveFilters()) {
-        await runSearch('');
+        await runSearch('', 0, { historyMode: 'replace' });
       } else {
         state.allResults = [];
         state.lastFetchedQuery = null;
         updateFilterOptions();
         renderSearchResults();
-        updateUrlFromState();
+        updateUrlFromState({ historyMode: 'replace' });
       }
       return;
     }
 
     debouncedSearch(query);
-    updateUrlFromState();
   });
 
   if (state.searchQuery) {
-    await runSearch(state.searchQuery);
+    await runSearch(state.searchQuery, 0, { historyMode: 'replace' });
   } else {
     state.searchQuery = '';
     state.allResults = [];
     updateFilterOptions();
     renderSearchResults();
-    updateUrlFromState();
+    updateUrlFromState({ historyMode: 'replace' });
   }
 }
 

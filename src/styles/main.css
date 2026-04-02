@@ -1,3 +1,39 @@
+:root {
+  /* Forest theme tokens used by Tailwind + custom CSS */
+  --forest-canopy: #0D1F22;
+  --forest-pine: #365314;
+  --forest-cedar: #264027;
+  --forest-fir: #3C5233;
+  --forest-moss: #6F732F;
+  --forest-bark: #B38A58;
+  --forest-bark-deep: #9B7547;
+  --forest-mist: #F4F7F2;
+  --forest-fog: #E3EBDD;
+  --forest-ink: #1F2B1F;
+  --forest-snow: #FFFFFF;
+
+  /* Semantic UI aliases for cross-page utility use */
+  --ui-surface: var(--forest-mist);
+  --ui-surface-elevated: var(--forest-snow);
+  --ui-surface-subtle: var(--forest-fog);
+  --ui-text-primary: var(--forest-ink);
+  --ui-text-muted: var(--forest-fir);
+  --ui-border-subtle: var(--forest-fog);
+  --ui-border-strong: var(--forest-fir);
+  --ui-cta: var(--forest-pine);
+  --ui-cta-hover: var(--forest-cedar);
+  --ui-focus: var(--forest-bark-deep);
+
+  /* Legacy aliases (safe while migrating older selectors/utilities) */
+  --color-background: var(--forest-canopy);
+  --color-primary: var(--forest-pine);
+  --color-secondary: var(--forest-cedar);
+  --color-tertiary: var(--forest-pine);
+  --color-quintiary: var(--forest-fir);
+  --color-accent-one: var(--forest-moss);
+  --color--accent-two: var(--forest-bark);
+}
+
 .dual-range {
   --min-percent: 0%;
   --max-percent: 100%;
@@ -14,10 +50,10 @@
   height: 0.35rem;
   border-radius: 999px;
   background: linear-gradient(
-	to right,
-	#d1d5db 0 var(--min-percent),
-	#65a30d var(--min-percent) var(--max-percent),
-	#d1d5db var(--max-percent) 100%
+          to right,
+          var(--forest-fog) 0 var(--min-percent),
+          var(--forest-moss) var(--min-percent) var(--max-percent),
+          var(--forest-fog) var(--max-percent) 100%
   );
   transform: translateY(-50%);
 }
@@ -41,8 +77,8 @@
   width: 1rem;
   height: 1rem;
   border-radius: 999px;
-  border: 2px solid #365314;
-  background: #84cc16;
+  border: 2px solid var(--forest-pine);
+  background: color-mix(in srgb, var(--forest-moss) 75%, white);
   cursor: pointer;
   pointer-events: auto;
 }
@@ -50,9 +86,9 @@
 .dual-range__input::-moz-range-thumb {
   width: 1rem;
   height: 1rem;
-  border: 2px solid #365314;
+  border: 2px solid var(--forest-pine);
   border-radius: 999px;
-  background: #84cc16;
+  background: color-mix(in srgb, var(--forest-moss) 75%, white);
   cursor: pointer;
   pointer-events: auto;
 }
@@ -74,6 +110,13 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Keep keyboard focus highly visible across all interactive elements. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ui-focus) 30%, transparent);
 }
 
 @keyframes fade-up {
@@ -147,12 +190,11 @@ input,
 #search-results article,
 #saved-parks-results article,
 #gallery figure {
-  transition:
-    transform var(--motion-fast) var(--motion-ease),
-    box-shadow var(--motion-fast) var(--motion-ease),
-    background-color var(--motion-fast) var(--motion-ease),
-    color var(--motion-fast) var(--motion-ease),
-    opacity var(--motion-fast) var(--motion-ease);
+  transition: transform var(--motion-fast) var(--motion-ease),
+  box-shadow var(--motion-fast) var(--motion-ease),
+  background-color var(--motion-fast) var(--motion-ease),
+  color var(--motion-fast) var(--motion-ease),
+  opacity var(--motion-fast) var(--motion-ease);
 }
 
 #search-results article,
@@ -190,8 +232,8 @@ input,
   width: 0.95rem;
   height: 0.95rem;
   border-radius: 999px;
-  border: 2px solid #84cc16;
-  border-top-color: #365314;
+  border: 2px solid color-mix(in srgb, var(--forest-moss) 75%, white);
+  border-top-color: var(--forest-pine);
   animation: spin 700ms linear infinite;
 }
 

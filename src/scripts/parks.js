@@ -1,4 +1,5 @@
 import { getParkData } from './parkService.mjs';
+import { applyThemeIcons } from './themeIcons.js';
 // Import the connection to the API.
 
 const SAVED_PARKS_KEY = 'savedParks';
@@ -7,18 +8,18 @@ let feedbackTimerId;
 // Keep visual utility classes centralized so layout/styling changes are easy.
 const CLASSES = {
   sectionTitle: 'mb-2 text-xl font-semibold',
-  mutedText: 'text-sm text-gray-600',
-  bodyText: 'text-sm text-gray-700',
+  mutedText: 'text-sm text-text-muted',
+  bodyText: 'text-sm text-text-muted',
   tagList: 'flex flex-wrap gap-2',
-  activityTag: 'rounded-full bg-lime-100 px-3 py-1 text-sm',
-  topicTag: 'rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800',
+  activityTag: 'rounded-full border border-forest-moss bg-surface-subtle px-3 py-1 text-sm text-cta-hover',
+  topicTag: 'rounded-full border border-forest-bark bg-surface px-3 py-1 text-sm text-text-muted',
   hoursRow: 'flex justify-between gap-3',
-  entranceCard: 'mb-4 rounded-md border-l-4 border-lime-600 bg-gray-50 p-3',
+  entranceCard: 'mb-4 rounded-md border-l-4 border-forest-moss bg-surface p-3',
   galleryCard: 'overflow-hidden rounded-md shadow-md',
   galleryImage: 'h-48 w-full object-cover transition duration-300 hover:scale-105',
-  galleryCaption: 'bg-white p-3',
-  actionSaved: 'bg-lime-800 text-white',
-  actionUnsavedBorder: 'border-lime-800 text-lime-800 bg-white',
+  galleryCaption: 'bg-surface-elevated p-3',
+  actionSaved: 'bg-cta text-white',
+  actionUnsavedBorder: 'border-cta text-cta bg-surface-elevated',
 };
 
 // Keep repeated HTML snippets centralized so render functions stay data-focused.
@@ -32,7 +33,7 @@ const TEMPLATES = {
   hoursItem: (day, value) => `<li class="${CLASSES.hoursRow}"><span class="font-semibold capitalize">${day}</span><span>${value}</span></li>`,
   entranceItem: (entrance) => `
       <div class="${CLASSES.entranceCard}">
-        <h4 class="font-semibold text-lime-900">${entrance.name}</h4>
+        <h4 class="font-semibold text-cta-hover">${entrance.name}</h4>
         <p class="mt-1 ${CLASSES.bodyText}">${entrance.description}</p>
       </div>
     `,
@@ -45,8 +46,8 @@ const TEMPLATES = {
         />
         <figcaption class="${CLASSES.galleryCaption}">
           <p class="text-sm font-semibold">${img.title}</p>
-          <p class="text-xs text-gray-600">${img.caption}</p>
-          <p class="mt-1 text-xs text-gray-500">Credit: ${img.credit}</p>
+          <p class="text-xs text-text-muted">${img.caption}</p>
+          <p class="mt-1 text-xs text-text-muted">Credit: ${img.credit}</p>
         </figcaption>
       </figure>
     `,
@@ -89,11 +90,11 @@ function setSavedButtonState(saveButton, parkCode) {
   saveButton.dataset.saved = String(saved);
   saveButton.setAttribute('aria-pressed', String(saved));
   saveButton.textContent = saved ? 'Saved' : 'Save';
-  saveButton.classList.toggle('bg-lime-800', saved);
+  saveButton.classList.toggle('bg-cta', saved);
   saveButton.classList.toggle('text-white', saved);
-  saveButton.classList.toggle('border-lime-800', !saved);
-  saveButton.classList.toggle('text-lime-800', !saved);
-  saveButton.classList.toggle('bg-white', !saved);
+  saveButton.classList.toggle('border-cta', !saved);
+  saveButton.classList.toggle('text-cta', !saved);
+  saveButton.classList.toggle('bg-surface-elevated', !saved);
 }
 
 function toggleSavedPark(parkCode) {
@@ -114,7 +115,7 @@ function setActionFeedback(message, isError = false) {
   clearTimeout(feedbackTimerId);
   feedback.textContent = message;
   feedback.classList.toggle('text-red-700', isError);
-  feedback.classList.toggle('text-gray-600', !isError);
+  feedback.classList.toggle('text-text-muted', !isError);
 
   feedbackTimerId = setTimeout(() => {
     feedback.textContent = '';
@@ -209,7 +210,7 @@ function renderAdmission(parkInfo) {
 
   admissionElement.innerHTML = `
     ${TEMPLATES.sectionTitle('Admission Fees')}
-    <ul class="space-y-1 text-sm text-gray-700">${feeMarkup}</ul>
+    <ul class="space-y-1 text-sm text-text-muted">${feeMarkup}</ul>
   `;
 }
 
@@ -227,7 +228,7 @@ function renderActivities(parkInfo) {
 
   activitiesElement.innerHTML = `
     ${TEMPLATES.sectionTitle('Activities')}
-    <ul class="${CLASSES.tagList} text-gray-700">${activityMarkup}</ul>
+    <ul class="${CLASSES.tagList} text-text-muted">${activityMarkup}</ul>
   `;
 }
 
@@ -245,11 +246,11 @@ function renderOperatingHours(parkInfo) {
   const orderedDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   const hoursMarkup = orderedDays.map((day) => TEMPLATES.hoursItem(day, standardHours[day])).join('');
 
-  const description = hoursData.description ? `<p class="mb-3 text-sm text-gray-600">${hoursData.description}</p>` : '';
+  const description = hoursData.description ? `<p class="mb-3 text-sm text-text-muted">${hoursData.description}</p>` : '';
   hoursElement.innerHTML = `
     ${TEMPLATES.sectionTitle('Operating Hours')}
     ${description}
-    <ul class="space-y-1 text-sm text-gray-700">${hoursMarkup}</ul>
+    <ul class="space-y-1 text-sm text-text-muted">${hoursMarkup}</ul>
   `;
 }
 
@@ -368,13 +369,25 @@ async function init() {
   const contact = document.querySelector('#contact');
   // Phone
   const phoneContact = contact.querySelector(':nth-child(1)');
-  phoneContact.innerHTML = `<a href="tel:${parkInfo.contacts.phoneNumbers[0].phoneNumber}"><img src="/icons/phone.svg" alt="Phone" class="bg-lime-900 text-white rounded-full p-1"></a>`;
+  const phoneNumber = parkInfo?.contacts?.phoneNumbers?.find(
+    (item) => item?.phoneNumber
+  )?.phoneNumber;
+  if (phoneNumber) {
+    phoneContact.innerHTML = `<a href="tel:${phoneNumber}"><img src="/icons/phone.svg" alt="Phone" data-theme-icon class="rounded-full bg-cta-hover p-1 text-white"></a>`;
+    phoneContact.classList.remove('hidden');
+  } else {
+    // Some parks do not expose a phone number in the API payload.
+    phoneContact.innerHTML = '';
+    phoneContact.classList.add('hidden');
+  }
   // Address
   const addressContact = contact.querySelector(':nth-child(2)');
-  addressContact.innerHTML = `<a href="${parkInfo.directionsUrl}"><img src="/icons/map.svg" alt="Directions" class="bg-lime-900 text-white rounded-full p-1"></a>`;
+  addressContact.innerHTML = `<a href="${parkInfo.directionsUrl}"><img src="/icons/map.svg" alt="Directions" data-theme-icon class="rounded-full bg-cta-hover p-1 text-white"></a>`;
   // Website
   const websiteContact = contact.querySelector(':nth-child(3)');
-  websiteContact.innerHTML = `<a href="${parkInfo.url}"><img src="/icons/link.svg" alt="Website" class="bg-lime-900 text-white rounded-full p-1"></a>`;
+  websiteContact.innerHTML = `<a href="${parkInfo.url}"><img src="/icons/link.svg" alt="Website" data-theme-icon class="rounded-full bg-cta-hover p-1 text-white"></a>`;
+
+  await applyThemeIcons(contact);
 
   initParkActions(parkInfo);
 

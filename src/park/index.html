@@ -11,16 +11,16 @@
     <link rel="stylesheet" href="../styles/tailwind.css"/>
     <link rel="stylesheet" href="../styles/main.css"/>
   </head>
-  <body class="flex min-h-screen w-full flex-col">
-  <header class="bg-lime-900 p-4 text-center text-white md:p-10"></header>
+  <body class="flex min-h-screen w-full flex-col bg-surface text-text-primary">
+  <header class="bg-cta-hover p-4 text-center text-white md:p-10"></header>
     <main class="flex grow flex-col p-3 md:p-5">
       <section class="mx-auto flex w-full max-w-5xl flex-col gap-4 md:flex-row md:justify-between">
         <div id="name">
-          <h2 class="text-4xl sm:text-5xl lg:border-r-black lg:text-left lg:text-7xl">
+          <h2 class="text-4xl sm:text-5xl lg:text-left lg:text-7xl">
             Yellowstone
           </h2>
           <span class="mt-1 block text-sm sm:text-base">National Park</span>
-          <p id="states" class="mt-1 text-sm text-gray-700">WY, MT, ID</p>
+          <p id="states" class="mt-1 text-sm text-text-muted">WY, MT, ID</p>
         </div>
 
         <div class="md:text-right">
@@ -31,7 +31,8 @@
                 ><img
                       src="/icons/phone.svg"
                   alt="Phone"
-                  class="rounded-full bg-lime-900 p-1 text-white"
+                  data-theme-icon
+                  class="rounded-full bg-cta-hover p-1 text-white"
               /></a>
             </li>
             <li>
@@ -39,7 +40,8 @@
                 ><img
                       src="/icons/map.svg"
                   alt="Directions"
-                  class="rounded-full bg-lime-900 p-1 text-white"
+                  data-theme-icon
+                  class="rounded-full bg-cta-hover p-1 text-white"
               /></a>
             </li>
             <li>
@@ -47,7 +49,8 @@
                 ><img
                       src="/icons/link.svg"
                   alt="Website"
-                  class="rounded-full bg-lime-900 p-1 text-white"
+                  data-theme-icon
+                  class="rounded-full bg-cta-hover p-1 text-white"
               /></a>
             </li>
           </ul>
@@ -56,7 +59,7 @@
             <button
               id="share-park"
               type="button"
-              class="rounded-md bg-lime-800 px-3 py-1 text-sm font-semibold text-white transition hover:bg-lime-700"
+              class="rounded-md bg-cta px-3 py-1 text-sm font-semibold text-white transition hover:bg-cta-hover"
             >
               Share
             </button>
@@ -65,18 +68,18 @@
               type="button"
               aria-pressed="false"
               data-saved="false"
-              class="rounded-md border border-lime-800 bg-white px-3 py-1 text-sm font-semibold text-lime-800 transition hover:bg-lime-50"
+              class="rounded-md border border-cta bg-surface-elevated px-3 py-1 text-sm font-semibold text-cta transition hover:bg-surface-subtle"
             >
               Save
             </button>
           </div>
-          <p id="action-feedback" aria-live="polite" class="mt-2 text-sm text-gray-600 md:text-right"></p>
+          <p id="action-feedback" aria-live="polite" class="mt-2 text-sm text-text-muted md:text-right"></p>
         </div>
       </section>
 
       <span
         id="description"
-        class="mx-auto mt-5 w-full max-w-5xl rounded-md p-4 shadow-md md:p-5"
+        class="mx-auto mt-5 w-full max-w-5xl rounded-md border border-border-subtle bg-surface-elevated p-4 shadow-md md:p-5"
         >On March 1, 1872, Yellowstone became the first national park for all to
         enjoy the unique hydrothermal wonders. Today, millions of people come
         here each year to camp, hike, and enjoy the majesty of the park.</span
@@ -90,38 +93,38 @@
       </section>
       
       <section class="mx-auto mt-6 grid w-full max-w-5xl gap-4 md:grid-cols-2">
-        <article id="topics" class="rounded-md bg-white p-4 shadow-md">
+        <article id="topics" class="rounded-md border border-border-subtle bg-surface-elevated p-4 shadow-md">
           <h3 class="mb-2 text-xl font-semibold">Park Themes</h3>
-          <p class="text-sm text-gray-600">Loading themes...</p>
+          <p class="text-sm text-text-muted">Loading themes...</p>
         </article>
 
-        <article id="admission" class="rounded-md bg-white p-4 shadow-md">
+        <article id="admission" class="rounded-md border border-border-subtle bg-surface-elevated p-4 shadow-md">
           <h3 class="mb-2 text-xl font-semibold">Admission Fees</h3>
-          <p class="text-sm text-gray-600">Loading admission information...</p>
+          <p class="text-sm text-text-muted">Loading admission information...</p>
         </article>
 
-        <article id="activities" class="rounded-md bg-white p-4 shadow-md">
+        <article id="activities" class="rounded-md border border-border-subtle bg-surface-elevated p-4 shadow-md">
           <h3 class="mb-2 text-xl font-semibold">Activities</h3>
-          <p class="text-sm text-gray-600">Loading activities...</p>
+          <p class="text-sm text-text-muted">Loading activities...</p>
         </article>
 
-        <article id="entrances" class="md:col-span-2 rounded-md bg-white p-4 shadow-md">
+        <article id="entrances" class="md:col-span-2 rounded-md border border-border-subtle bg-surface-elevated p-4 shadow-md">
           <h3 class="mb-2 text-xl font-semibold">Entrance Stations</h3>
-          <p class="text-sm text-gray-600">Loading entrances...</p>
+          <p class="text-sm text-text-muted">Loading entrances...</p>
         </article>
 
-        <article id="hours" class="rounded-md bg-white p-4 shadow-md">
+        <article id="hours" class="rounded-md border border-border-subtle bg-surface-elevated p-4 shadow-md">
           <h3 class="mb-2 text-xl font-semibold">Operating Hours</h3>
-          <p class="text-sm text-gray-600">Loading hours...</p>
+          <p class="text-sm text-text-muted">Loading hours...</p>
         </article>
 
-        <article id="weather" class="rounded-md bg-white p-4 shadow-md">
+        <article id="weather" class="rounded-md border border-border-subtle bg-surface-elevated p-4 shadow-md">
           <h3 class="mb-2 text-xl font-semibold">Weather</h3>
-          <p class="text-sm text-gray-600">Loading weather information...</p>
+          <p class="text-sm text-text-muted">Loading weather information...</p>
         </article>
       </section>
     
     </main>
-  <footer class="bg-stone-600 p-5 text-center font-semibold text-white"></footer>
+  <footer class="bg-border-strong p-5 text-center font-semibold text-white"></footer>
   </body>
 </html>
